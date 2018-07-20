@@ -1,9 +1,6 @@
 # sktest
 sktest is an application to test how good the connectivity to http://www.google.com/ is, using libcurl functions.
 
-# Motivation
-A short description of the motivation behind the creation and maintenance of the project. This should explain why the project exists.
-
 # Code style
 The code is written in C using POSIX / ISO C standards.
 
