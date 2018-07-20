@@ -14,6 +14,11 @@ make test (optional)
 make install (requires root)
 ```
 
+Then the repo can be cloned using:
+```
+git clone https://github.com/alexpa24/sktest.git
+```
+
 # Tests
 
 # How to use?
