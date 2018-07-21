@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
         {
             if (strcmp(argv[i], "-n") == 0) //number of HTTP requests to make
             {   
-                n = atoi(argv[i+1]);   
+                n = atoi(argv[i+1]); 
                 i++;
             }
             if (strcmp(argv[i], "-H") == 0) //HTTP header information
