@@ -1,5 +1,31 @@
 #include <sklib.h>
 
+//function to insert new parameters in the HTTP headers linked list
+void insert(struct list *pList, char *newParam)
+{
+    struct node *newNode;
+    newNode = (struct node *)malloc(sizeof(struct node));
+
+    newNode->param = malloc(strlen(newParam)+1);
+    strcpy(newNode->param,newParam);
+
+    if (pList->firstNode == NULL)
+    {
+        pList->firstNode = newNode;
+        newNode->nextNode = NULL;
+    }
+
+    else
+    {
+        struct node *pos = pList->firstNode;
+        for(; pos->nextNode; pos = pos->nextNode);
+        pos->nextNode = newNode;
+        newNode->nextNode = NULL;
+    }
+
+}
+
+//function to compare couples of double values to sort the times arrays
 int compare (const void * a, const void * b)
 {
   if ( *(double*)a == *(double*)b ) return 0;
@@ -7,6 +33,7 @@ int compare (const void * a, const void * b)
   else return 1;
 }
 
+//function to obtain the median from an array
 double Median(double *array, size_t length)
 {
     if(length % 2 == 0)
@@ -21,7 +48,8 @@ double Median(double *array, size_t length)
     }
 }
 
-void TestandMetrics(int n)
+//main function 
+void TestandMetrics(int n, struct list *lst, int t)
 {
     CURL *curl;
     CURLcode res;
@@ -39,26 +67,36 @@ void TestandMetrics(int n)
     double* Arrayconnecttime=(double*) malloc(n*sizeof(double));
     double* Arraystarttime=(double*) malloc(n*sizeof(double));
     double* Arraytotaltime=(double*) malloc(n*sizeof(double));
- 
+
+    struct curl_slist *headerlist=NULL;
+    struct node *tmp = lst->firstNode;
+
+    //number of HTTP request can't be less than 1
     if(n < 1){
-        printf("Error: Incorrect number of HTTP requests to make (%d)", n);
         n = 1;
     }
 
     for(int k=0;k<n;k++){
+        //get the CURL easy handle
         curl = curl_easy_init();
+        //set the URL to work on
         curl_easy_setopt(curl, CURLOPT_URL, "http://www.google.com/");
         //avoid curl to print the output from the request
         curl_easy_setopt(curl, CURLOPT_NOBODY,1);
 
+        //add all the extra HTTP headers
+        while(tmp){
+            headerlist = curl_slist_append(headerlist, tmp->param);
+            tmp=tmp->nextNode;
+        }
+        //headerlist = curl_slist_append(headerlist, "Connection: MyConnection");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
+
+        //perform the request 
         res = curl_easy_perform(curl);
 
         if(res == CURLE_OK)
         {
-            lookuptime = 0.00;
-            connecttime = 0.00;
-            starttime = 0.00;
-            totaltime = 0.00;
             //grab the IP value
             res = curl_easy_getinfo(curl, CURLINFO_PRIMARY_IP, &ip);
             if(res != CURLE_OK) {
@@ -100,7 +138,18 @@ void TestandMetrics(int n)
         {
             printf("curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
         }
+        //release the easy handle
         curl_easy_cleanup(curl);
+
+        if(t>0)
+        {
+            //sleep the time between requests
+            #ifdef _WIN32
+            Sleep(t*1000);
+            #else
+            sleep(t);
+            #endif
+        }
     }
     //Calculate the median for the 4 time values
     qsort(Arraylookuptime, n, sizeof(double), compare);
