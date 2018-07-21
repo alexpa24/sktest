@@ -19,6 +19,24 @@ Then the repo can be cloned using:
 git clone https://github.com/alexpa24/sktest.git
 ```
 
-# Tests
+# Built
+Use the proposed makefile to build the sktest application in a Unix machine using
+```
+make sktest
+```
+Alternatively you can use
+```
+gcc -o sktest sktest.c sklib.c -lcurl -I.
+```
 
 # How to use?
+One the application is compiled, can be run using:
+```
+./sktest -n <number of HTTP requests>
+```
+For example:
+```
+./sktest -n 3
+```
+
+# Tests
