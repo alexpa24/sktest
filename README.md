@@ -75,13 +75,12 @@ One usefull improvement of the application would be to pass the target URL as an
 
 Since the purpose of the application is to make a POSIX / ISO C compliant code, there are some modifications required to make it portable to Windows that are proposed here and not added to the code. Change the sleep line in sklib.c for:
 ```
-if(t>0)
-    //sleep the time between requests
-    #ifdef _WIN32
-    Sleep(t*1000);
-    #else
-    sleep(t);
-    #endif
+//sleep the time between requests
+#ifdef _WIN32
+Sleep(t*1000);
+#else
+sleep(t);
+#endif
 ```
 And, add the following lines to aklib.h:
 ```
