@@ -33,10 +33,10 @@ gcc -o sktest sktest.c sklib.c -lcurl -I.
 # How to use?
 Once the application is compiled, it can run:
 ```
-./sktest -n <number of HTTP requests> - H <Header-name: Header-value> -t <time between requests>
+./sktest -n <number of HTTP requests> - H "Header-name: Header-value" -t <time between requests>
 ```
 
-All the arguments are optional. The number of requests is 1 and the time between requests is 0 by default. The parameter -H can be used multiple times to add additional HTTP headers.
+All the arguments are optional. The number of requests is 1 and the time between requests is 0 by default. The parameter -H can be used multiple times to add additional HTTP headers. Each of the parameters must be under quotes.
 
 For example:
 ```
@@ -55,6 +55,19 @@ MBPdeAlejandro:sktest alex$ ./sktest
 SKTEST;2a00:1450:4009:813::2004;200;0.001870;0.026070;0.087508;0.087574
 MBPdeAlejandro:sktest alex$ ./sktest -n 10
 SKTEST;2a00:1450:4009:813::2004;200;0.001182;0.023435;0.089413;0.089445
+```
+
+The header modification has been tested adding different header parameters like:
+```
+MBPdeAlejandro:sktest alex$ ./sktest -H "Connection: MyConnection"
+```
+
+And checking the TCP stream in Wireshark we have:
+```
+HEAD / HTTP/1.1
+Host: www.google.com
+Accept: */*
+Connection: MyConnection
 ```
 
 # Future improvement areas
