@@ -5,8 +5,7 @@ int main(int argc, char *argv[])
 {
     int n = 1; //the number of HTTP requests by default
     int t = 0; //time between requests
-    struct list lst;
-    struct list *plst = &lst;
+    struct curl_slist *headerlist=NULL;
 
     for (int i = 1; i < argc; i++)
     {  
@@ -19,7 +18,7 @@ int main(int argc, char *argv[])
             }
             if (strcmp(argv[i], "-H") == 0) //HTTP header information
             {   
-                insert(plst, argv[i+1]);
+                headerlist = curl_slist_append(headerlist, argv[i+1]);
                 i++;
             }
             if (strcmp(argv[i], "-t") == 0) //HTTP time between request
@@ -29,7 +28,8 @@ int main(int argc, char *argv[])
             }
         }
     }
- 
-    TestandMetrics(n,plst,t);
+    
+    //call to the sklib function with the parameters
+    TestandMetrics(n,headerlist,t);
     return 0;
 }

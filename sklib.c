@@ -1,30 +1,5 @@
 #include <sklib.h>
 
-//function to insert new parameters in the HTTP headers linked list
-void insert(struct list *pList, char *newParam)
-{
-    struct node *newNode;
-    newNode = (struct node *)malloc(sizeof(struct node));
-
-    newNode->param = malloc(strlen(newParam)+1);
-    strcpy(newNode->param,newParam);
-
-    if (pList->firstNode == NULL)
-    {
-        pList->firstNode = newNode;
-        newNode->nextNode = NULL;
-    }
-
-    else
-    {
-        struct node *pos = pList->firstNode;
-        for(; pos->nextNode; pos = pos->nextNode);
-        pos->nextNode = newNode;
-        newNode->nextNode = NULL;
-    }
-
-}
-
 //function to compare couples of double values to sort the times arrays
 int compare (const void * a, const void * b)
 {
@@ -48,8 +23,8 @@ double Median(double *array, size_t length)
     }
 }
 
-//main function 
-void TestandMetrics(int n, struct list *lst, int t)
+//function to test the connectivity to the target server
+void TestandMetrics(int n, struct curl_slist *hlist, int t)
 {
     CURL *curl;
     CURLcode res;
@@ -68,11 +43,9 @@ void TestandMetrics(int n, struct list *lst, int t)
     double* Arraystarttime=(double*) malloc(n*sizeof(double));
     double* Arraytotaltime=(double*) malloc(n*sizeof(double));
 
-    struct curl_slist *headerlist=NULL;
-    struct node *tmp = lst->firstNode;
-
     //number of HTTP request can't be less than 1
     if(n < 1){
+        printf("Error: number of HTTP request can't be less than 1");
         n = 1;
     }
 
@@ -90,12 +63,10 @@ void TestandMetrics(int n, struct list *lst, int t)
         curl_easy_setopt(curl, CURLOPT_NOBODY,1);
 
         //add all the extra HTTP headers
-        while(tmp){
-            headerlist = curl_slist_append(headerlist, tmp->param);
-            tmp=tmp->nextNode;
+        if(hlist){
+            curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, hlist);
         }
-        //headerlist = curl_slist_append(headerlist, "Connection: MyConnection");
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
 
         //perform the request 
         res = curl_easy_perform(curl);

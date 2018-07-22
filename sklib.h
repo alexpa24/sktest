@@ -18,4 +18,4 @@ struct list
 void insert(struct list *pList, char *newParam);
 int compare (const void * a, const void * b);
 double Median(double *array, size_t length);
-void TestandMetrics(int n, struct list *lst, int t);
+void TestandMetrics(int n, struct curl_slist *hlist, int t);
