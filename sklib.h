@@ -2,12 +2,7 @@
 #include <curl/curl.h>
 #include <string.h> //for strcmp()
 #include <stdlib.h> //for qsort
-
-#ifdef _WIN32
-#include <Windows.h> //for the Sleep() function in Windows
-#else
 #include <unistd.h> // for the sleep() function in Unix
-#endif
 
 struct node
 {

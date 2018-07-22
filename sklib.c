@@ -76,6 +76,11 @@ void TestandMetrics(int n, struct list *lst, int t)
         n = 1;
     }
 
+    if(t > UINT_MAX){ //POSIX / ISO C compliance
+        printf("Error: time between requests cannot be more than: %d", UINT_MAX);
+        t=UINT_MAX;
+    }
+
     for(int k=0;k<n;k++){
         //get the CURL easy handle
         curl = curl_easy_init();
@@ -144,11 +149,7 @@ void TestandMetrics(int n, struct list *lst, int t)
         if(t>0)
         {
             //sleep the time between requests
-            #ifdef _WIN32
-            Sleep(t*1000);
-            #else
             sleep(t);
-            #endif
         }
     }
     //Calculate the median for the 4 time values
